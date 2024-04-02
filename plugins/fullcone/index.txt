@@ -1,0 +1,24 @@
+/fullcone
+├── firewall		======>/package/network/config/firewall
+│   ├── (Makefile_mod:Depends add +iptables-mod-fullconenat)
+│   └── patches
+│       └── fullconenat.patch
+├── firewall4		======>/package/network/config/firewall4
+│   ├── (Makefile_mod:Depends add +kmod-nft-fullcone)
+│   └── patches
+│       ├── 001-firewall4-add-support-for-fullcone-nat.patch
+│       └── 002-fix-adding-offloading-device.patch
+├── fullconenat		======>/package/network/utils/fullconenat
+│   ├── Makefile
+│   ├── patches
+│   │   └── 000-printk.patch
+│   └── src
+│       └── Makefile
+├── fullconenat-nft		======>/package/network/utils/fullconenat-nft
+│   └── Makefile
+├── libnftnl		======>/package/libs/libnftnl
+│   └── patches
+│       └── 001-libnftnl-add-fullcone-expression-support.patch
+└── nftables		======>/package/network/utils/nftables
+    └── patches
+        └── 002-nftables-add-fullcone-expression-support.patch
