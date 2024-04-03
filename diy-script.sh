@@ -76,6 +76,9 @@ sed -i 's/luci-theme-bootstrap/luci-theme-argon/g' feeds/luci/collections/luci/M
 # Modify hostname
 #sed -i 's/OpenWrt/P3TERX-Router/g' package/base-files/files/bin/config_generate
 
+# 修改时区为CST-8,Asia/Shanghai
+sed -i "315s/UTC'/CST-8'\\n\\t\\tset system.@system\[-1\].zonename=\'Asia\/Shanghai\'/" package/base-files/files/bin/config_generate
+
 chmod +x $GITHUB_WORKSPACE/scripts/*
 $GITHUB_WORKSPACE/scripts/fullcone.sh
 $GITHUB_WORKSPACE/scripts/clash-core.sh
