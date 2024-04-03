@@ -135,6 +135,7 @@ jobs:
           df -h
 
       - name: Compile firmware
+        id: compile
         run: |
           cd $OPENWRT_PATH
           make -j$(nproc) || make -j1 V=s
@@ -178,7 +179,7 @@ jobs:
           path: ${{ env.OPENWRT_PATH }}/bin/targets/
 
       - name: Upload release asset
-        if: github.event == 'release'
+        if: steps.compile.outputs.status == 'success'
         uses: svenstaro/upload-release-action@v2
         with:
           repo_token: ${{ secrets.YOURTOKEN }}
