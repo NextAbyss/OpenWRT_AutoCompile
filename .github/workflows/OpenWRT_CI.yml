@@ -163,5 +163,5 @@ jobs:
         with:
           repo_token: ${{ secrets.YOURTOKEN }}
           file: ./artifact/firmware/*
-          tag: OpenWRT_${{ env.FIRMWARE_TAG }}-${{ REPO_BRANCH }
+          tag: OpenWRT_${{ env.FIRMWARE_TAG }}-${{ REPO_BRANCH }}
           file_glob: true
