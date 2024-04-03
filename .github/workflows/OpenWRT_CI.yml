@@ -107,23 +107,27 @@ jobs:
           # 
       - name: Update feeds
         run: |
+          cd $OPENWRT_PATH
           ./scripts/feeds update -a
           ./scripts/feeds install -a
           
       - name: Load Custom Configuration
         run: |
           chmod +x $DIY_SCRIPT
+          cat $DIY_SCRIPT
           cd $OPENWRT_PATH
           $GITHUB_WORKSPACE/$DIY_SCRIPT
 
       - name: Make download
         run: |
+          cd $OPENWRT_PATH
           make download -j8 || make download -j1 V=s
           rm -rf $(find ./dl/ -size -1024c)
           df -h
 
       - name: Compile firmware
         run: |
+          cd $OPENWRT_PATH
           make -j$(nproc) || make -j1 V=s
           echo "======================="
           echo "Space usage:"
@@ -135,6 +139,7 @@ jobs:
 
       - name: Prepare artifact
         run: |
+          cd $OPENWRT_PATH
           mkdir -p ./artifact/firmware
           mkdir -p ./artifact/package
           mkdir -p ./artifact/buildinfo
@@ -147,25 +152,25 @@ jobs:
         uses: actions/upload-artifact@main
         with:
           name: OpenWrt_buildinfo
-          path: ./artifact/buildinfo/
+          path: $OPENWRT_PATH/artifact/buildinfo/
 
       - name: Deliver package
         uses: actions/upload-artifact@main
         with:
           name: OpenWrt_package
-          path: ./artifact/package/
+          path: $OPENWRT_PATH/artifact/package/
 
       - name: Deliver firmware
         uses: actions/upload-artifact@main
         with:
           name: OpenWrt_firmware
-          path: ./bin/targets/
+          path: $OPENWRT_PATH/bin/targets/
 
       - name: Upload release asset
         if: github.event == 'release'
         uses: svenstaro/upload-release-action@v2
         with:
           repo_token: ${{ secrets.YOURTOKEN }}
-          file: ./artifact/firmware/*
+          file: $OPENWRT_PATH/artifact/firmware/*
           tag: OpenWRT_${{ env.FIRMWARE_TAG }}-${{ env.REPO_BRANCH }}
           file_glob: true
