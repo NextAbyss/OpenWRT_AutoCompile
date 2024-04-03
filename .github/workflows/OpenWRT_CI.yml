@@ -179,13 +179,11 @@ jobs:
           path: ${{ env.OPENWRT_PATH }}/bin/targets/
 
       - name: Upload release asset
-        if: steps.compile.outputs.status == 'success'
-        uses: svenstaro/upload-release-action@v2
+        uses: ncipollo/release-action@v1
         with:
-          repo_token: ${{ secrets.YOURTOKEN }}
-          file: ${{ env.OPENWRT_PATH }}/artifact/firmware/*
+          token: ${{ secrets.GITHUB_TOKEN }}
+          artifacts: ${{ env.OPENWRT_PATH }}/artifact/firmware/*
           tag: OpenWRT_${{ env.FIRMWARE_TAG }}-${{ env.REPO_BRANCH }}
-          file_glob: true
           body: |
             **🐱‍🏍🐱‍🏍🐱‍🏍 OpenWrt Firmware ${{ env.FIRMWARE_TAG }} 🐱‍🏍🐱‍🏍🐱‍🏍**
             ### 🐱‍👓 固件信息 🐱‍👓
