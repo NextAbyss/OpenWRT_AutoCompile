@@ -68,7 +68,8 @@ jobs:
         run: |
           df -hT $GITHUB_WORKSPACE
           echo "VERSION=$(curl -sL https://api.github.com/repos/openwrt/openwrt/releases | grep -E 'tag_name\": \"v[0-9]+\.[0-9]+\.[0-9]+' -o | head -n 1 | tr -d 'tag_name\": \:v')" >> $GITHUB_ENV
-          echo "REPO_BRANCH=$(curl -sL https://api.github.com/repos/openwrt/openwrt/releases | grep -E 'tag_name\": \"v[0-9]+\.[0-9]+\.[0-9]+' -o | head -n 1 | tr -d 'tag_name\": \:')" >> $GITHUB_ENV
+          REPO_BRANCH=$(curl -sL https://api.github.com/repos/openwrt/openwrt/releases | grep -E 'tag_name\": \"v[0-9]+\.[0-9]+\.[0-9]+' -o | head -n 1 | tr -d 'tag_name\": \:')
+          echo "REPO_BRANCH=$REPO_BRANCH" >> $GITHUB_ENV
           git clone $REPO_URL --single-branch --depth=1 -b $REPO_BRANCH openwrt
           cd openwrt
           echo "OPENWRT_PATH=$PWD" >> $GITHUB_ENV
