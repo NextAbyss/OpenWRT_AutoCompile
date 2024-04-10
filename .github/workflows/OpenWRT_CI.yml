@@ -152,7 +152,7 @@ jobs:
           echo "======================="
           du -h ./ --max-depth=1
           du -h /mnt/openwrt/ --max-depth=1 || true
-          echo "DATA=$(date +"%Y.%m.%d %H:%M")" >> $GITHUB_ENV
+          echo "DATE=$(date +"%Y.%m.%d %H:%M")" >> $GITHUB_ENV
 
       - name: Prepare artifact
         run: |
@@ -188,7 +188,7 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           artifacts: ${{ env.OPENWRT_PATH }}/artifact/firmware/*
-          tag: OpenWRT_${{ env.FIRMWARE_TAG }}||${{ env.DATE }}
+          tag: OpenWRT_${{ env.FIRMWARE_TAG }}🐱‍👓${{ env.DATE }}
           body: |
             **🐱‍🏍🐱‍🏍🐱‍🏍 OpenWrt Firmware For ${{ env.FIRMWARE_TAG }} 🐱‍🏍🐱‍🏍🐱‍🏍**
             ### 🐱‍👓 固件信息 🐱‍👓
