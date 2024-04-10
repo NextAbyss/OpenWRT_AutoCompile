@@ -32,6 +32,7 @@ git clone --depth=1 https://github.com/jerrykuku/luci-app-argon-config.git packa
 
 git_sparse_clone master https://github.com/immortalwrt/immortalwrt package/emortal/cpufreq
 git_sparse_clone master https://github.com/immortalwrt/immortalwrt package/emortal/autocore
+git_sparse_clone master https://github.com/immortalwrt/immortalwrt utils/bcm27xx-utils
 git_sparse_clone master https://github.com/immortalwrt/immortalwrt package/emortal/autosamba
 git_sparse_clone master https://github.com/immortalwrt/immortalwrt package/emortal/automount
 
