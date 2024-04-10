@@ -188,13 +188,13 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           artifacts: ${{ env.OPENWRT_PATH }}/artifact/firmware/*
-          tag: OpenWRT_${{ env.FIRMWARE_TAG }}🐱‍👓${{ env.DATE }}
+          tag: OpenWRT_${{ env.FIRMWARE_TAG }}🐱‍👓
           body: |
-            **🐱‍🏍🐱‍🏍🐱‍🏍 OpenWrt Firmware For ${{ env.FIRMWARE_TAG }} 🐱‍🏍🐱‍🏍🐱‍🏍**
-            ### 🐱‍👓 固件信息 🐱‍👓
+            **🐱‍🏍🐱‍🏍🐱‍🏍 OpenWrt Official Firmware For ${{ env.FIRMWARE_TAG }} 🐱‍🏍🐱‍🏍🐱‍🏍**
+            ### 🐱‍👓 ${{ env.DATE }} 🐱‍👓
             - 🐱‍👤🐱‍👤 平台架构: ${{ env.DEVICE_TARGET }}-${{ env.DEVICE_SUBTARGET }}
             - 🐱‍🐉🐱‍🐉 固件源码: ${{ env.REPO_URL }}
-            - 🐱‍💻🐱‍💻源码分支: ${{ env.REPO_BRANCH }}
+            - 🐱‍💻🐱‍💻 源码分支: ${{ env.REPO_BRANCH }}
             - 🦝🦝 内核版本: ${{ env.KERNEL }}
             - 🦈🦈 默认地址: 192.168.50.3
             ### 🐱‍🚀 固件版本 🐱‍🚀
