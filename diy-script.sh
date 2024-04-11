@@ -68,6 +68,11 @@ cp -r $GITHUB_WORKSPACE/plugins/libtorrent-rasterbar feeds/packages/libs
 LIBTORRENT_VERSION=$(curl -sL https://api.github.com/repos/arvidn/libtorrent/releases/latest | grep -E 'tag_name\": \"v[0-9]+\.[0-9]+\.[0-9]+' -o | head -n 1 | tr -d 'tag_name\": \:'|sed 's?v??g')
 sed -i 's/PKG_VERSION:=/PKG_VERSION:='"${LIBTORRENT_VERSION}"'/g' feeds/packages/libs/libtorrent-rasterbar/Makefile
 
+# netdata
+git clone --depth=1 https://github.com/sirpdboy/luci-app-netdata package/luci-app-netdata
+
+
+
 # Modify default IP
 sed -i 's/192.168.1.1/192.168.50.3/g' package/base-files/files/bin/config_generate
 
