@@ -14,12 +14,12 @@ function git_sparse_clone() {
 
 
 # 移植master分支的包至23.05.2分支解决defconfig报错
-rm -rf feeds/packages/lang/python/pymysql
-rm -rf feeds/packages/lang/golang
-git_sparse_clone master https://github.com/openwrt/packages lang/python/pymysql
-git_sparse_clone master https://github.com/openwrt/packages lang/golang
-mv package/golang feeds/packages/lang
-mv package/pymysql feeds/packages/lang/python
+#rm -rf feeds/packages/lang/python/pymysql
+#rm -rf feeds/packages/lang/golang
+#git_sparse_clone master https://github.com/openwrt/packages lang/python/pymysql
+#git_sparse_clone master https://github.com/openwrt/packages lang/golang
+#mv package/golang feeds/packages/lang
+#mv package/pymysql feeds/packages/lang/python
 
 git_sparse_clone master https://github.com/kenzok8/openwrt-packages luci-app-openclash
 git_sparse_clone master https://github.com/kenzok8/openwrt-packages ddns-go
