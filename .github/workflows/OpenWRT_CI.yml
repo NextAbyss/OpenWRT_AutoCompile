@@ -182,13 +182,15 @@ jobs:
         with:
           name: OpenWrt_firmware
           path: ${{ env.OPENWRT_PATH }}/bin/targets/
-
+          
       - name: Upload release asset
-        uses: ncipollo/release-action@v1
+        if: github.event == 'release'
+        uses: svenstaro/upload-release-action@v2
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          artifacts: ${{ env.OPENWRT_PATH }}/artifact/firmware/*
-          tag_name: OpenWRT_${{ env.FIRMWARE_TAG }}_${{ env.DATE }}
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: ${{ env.OPENWRT_PATH }}/artifact/firmware/*
+          tag: ${{ github.ref }}
+          file_glob: true
           body: |
             **🐱‍🏍🐱‍🏍🐱‍🏍 OpenWrt Official Firmware For ${{ env.FIRMWARE_TAG }} 🐱‍🏍🐱‍🏍🐱‍🏍**
             ### 🐱‍👓 ${{ env.DATE }} 🐱‍👓
