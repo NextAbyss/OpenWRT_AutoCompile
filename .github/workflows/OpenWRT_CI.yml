@@ -188,7 +188,7 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           artifacts: ${{ env.OPENWRT_PATH }}/artifact/firmware/*
-          tag: OpenWRT_${{ env.FIRMWARE_TAG }}🐱‍👓
+          tag: OpenWRT_${{ env.FIRMWARE_TAG }}🐱‍👓${{ env.DATE }}
           body: |
             **🐱‍🏍🐱‍🏍🐱‍🏍 OpenWrt Official Firmware For ${{ env.FIRMWARE_TAG }} 🐱‍🏍🐱‍🏍🐱‍🏍**
             ### 🐱‍👓 ${{ env.DATE }} 🐱‍👓
