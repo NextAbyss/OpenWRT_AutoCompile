@@ -71,7 +71,9 @@ sed -i 's/PKG_VERSION:=/PKG_VERSION:='"${LIBTORRENT_VERSION}"'/g' feeds/packages
 # netdata
 git clone --depth=1 https://github.com/sirpdboy/luci-app-netdata package/luci-app-netdata
 
-
+# udp2raw
+git_sparse_clone master https://github.com/immortalwrt/packages net/udp2raw
+git_sparse_clone master https://github.com/immortalwrt/luci applications/luci-app-udp2raw
 
 # Modify default IP
 sed -i 's/192.168.1.1/192.168.50.3/g' package/base-files/files/bin/config_generate
