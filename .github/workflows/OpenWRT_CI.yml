@@ -11,9 +11,9 @@ name: OpenWrt-CI
 
 on:
   workflow_dispatch:
-  schedule:
-    - cron: 0 23 * * *
-
+#  schedule:
+#    - cron: 0 23 * * *
+#
 env:
   REPO_URL: https://github.com/openwrt/openwrt.git
   CONFIG_FILE: .config
