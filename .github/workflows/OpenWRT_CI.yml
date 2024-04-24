@@ -188,7 +188,7 @@ jobs:
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           file: ${{ env.OPENWRT_PATH }}/artifact/firmware/*
-          tag: OpenWRT_${{ env.DATE }}
+          tag: OpenWRT_${{ env.REPO_BRANCH }}
           file_glob: true
           body: |
             **🐱‍🏍🐱‍🏍🐱‍🏍 OpenWrt Official Firmware For ${{ env.FIRMWARE_TAG }} 🐱‍🏍🐱‍🏍🐱‍🏍**
