@@ -76,9 +76,6 @@ git_sparse_clone master https://github.com/immortalwrt/packages net/udp2raw
 git_sparse_clone master https://github.com/immortalwrt/luci applications/luci-app-udp2raw
 sed -i 's?../../luci.mk?$(TOPDIR)/feeds/luci/luci.mk?g' package/luci-app-udp2raw/Makefile
 
-# kcptun
-git clone --depth=1 https://github.com/kuoruan/luci-app-kcptun.git package/luci-app-kcptun
-
 # Modify default IP
 sed -i 's/192.168.1.1/192.168.50.3/g' package/base-files/files/bin/config_generate
 
