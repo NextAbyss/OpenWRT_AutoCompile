@@ -164,6 +164,7 @@ jobs:
           cp -rf $(find ./bin/targets/ -type f) ./artifact/firmware/
           cp -rf $(find ./bin/packages/ -type f -name "*.ipk") ./artifact/package/
           cp -rf $(find ./bin/targets/ -type f -name "*.buildinfo" -o -name "*.manifest") ./artifact/buildinfo/
+          echo "DATE_YMD=$(date +"%Y.%m.%d")" >> $GITHUB_ENV
 
       - name: Deliver buildinfo
         uses: actions/upload-artifact@main
@@ -188,7 +189,7 @@ jobs:
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           file: ${{ env.OPENWRT_PATH }}/artifact/firmware/*
-          tag: OpenWRT_${{ env.REPO_BRANCH }}_$(date +"%Y.%m.%d_%H:%M")
+          tag: OpenWRT_${{ env.REPO_BRANCH }}_${{ env.DATE_YMD }}
           file_glob: true
           body: |
             **🐱‍🏍🐱‍🏍🐱‍🏍 OpenWrt Official Firmware For ${{ env.FIRMWARE_TAG }} 🐱‍🏍🐱‍🏍🐱‍🏍**
