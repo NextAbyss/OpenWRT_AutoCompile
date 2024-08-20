@@ -16,7 +16,6 @@ on:
 #
 env:
   REPO_URL: https://github.com/immortalwrt/immortalwrt.git
-  REPO_BRANCH: openwrt-23.05
   CONFIG_FILE: immortalwrt.config
   DIY_SCRIPT: immortalwrt_script.sh
   CACHE_TOOLCHAIN: true
@@ -76,6 +75,7 @@ jobs:
         run: |
           df -hT $GITHUB_WORKSPACE
           echo "VERSION=$(curl -sL https://api.github.com/repos/immortalwrt/immortalwrt/tags | grep -E 'name\": \"v[0-9]+\.[0-9]+\.[0-9]+' -o | head -n 1 | tr -d 'name\": \"v')" >> $GITHUB_ENV
+          echo "REPO_BRANCH=$(curl -sL https://api.github.com/repos/immortalwrt/immortalwrt/branches | grep -E 'name\": \"openwrt-[0-9]+\.[0-9]+' -o | tail -n 1 | sed 's/name\": \"//')" >> $GITHUB_ENV
           git clone $REPO_URL --single-branch --depth=1 -b $REPO_BRANCH immortalwrt
           cd immortalwrt
           echo "OPENWRT_PATH=$PWD" >> $GITHUB_ENV
