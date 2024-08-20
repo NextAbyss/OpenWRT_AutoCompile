@@ -54,9 +54,11 @@ jobs:
       - name: Clone Source Codec
         run: |
           df -hT $GITHUB_WORKSPACE
-          echo "VERSION=$(curl -sL https://api.github.com/repos/immortalwrt/immortalwrt/tags | grep -E 'name\": \"v[0-9]+\.[0-9]+\.[0-9]+' -o | head -n 1 | tr -d 'name\": \"v')" >> $GITHUB_ENV
+          VERSION=$(curl -sL https://api.github.com/repos/immortalwrt/immortalwrt/tags | grep -E 'name\": \"v[0-9]+\.[0-9]+\.[0-9]+' -o | head -n 1 | tr -d 'name\": \"v')"
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
           echo $VERSION
-          echo "REPO_BRANCH=$(curl -sL https://api.github.com/repos/immortalwrt/immortalwrt/branches | grep -E 'name\": \"openwrt-[0-9]+\.[0-9]+' -o | tail -n 1 | sed 's/name\": \"//')" >> $GITHUB_ENV
+          REPO_BRANCH=$(curl -sL https://api.github.com/repos/immortalwrt/immortalwrt/branches | grep -E 'name\": \"openwrt-[0-9]+\.[0-9]+' -o | tail -n 1 | sed 's/name\": \"//')"
+          echo "REPO_BRANCH=$REPO_BRANCH" >> $GITHUB_ENV
           echo $REPO_BRANCH
           echo "git clone $REPO_URL --single-branch --depth=1 -b $REPO_BRANCH immortalwrt"
           git clone $REPO_URL --single-branch --depth=1 -b $REPO_BRANCH immortalwrt
