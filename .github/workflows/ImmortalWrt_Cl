@@ -1,0 +1,208 @@
+#
+# This is free software, lisence use MIT.
+# 
+# Copyright (C) 2019 P3TERX <https://p3terx.com>
+# Copyright (C) 2020 KFERMercer <KFER.Mercer@gmail.com>
+# 
+# <https://github.com/KFERMercer/OpenWrt-CI>
+#
+
+name: OpenWrt-CI
+
+on:
+  workflow_dispatch:
+#  schedule:
+#    - cron: 0 23 * * *
+#
+env:
+  REPO_URL: https://github.com/immortalwrt/immortalwrt.git
+  CONFIG_FILE: .config
+  DIY_SCRIPT: immortalwrt_script.sh
+  CACHE_TOOLCHAIN: true
+  UPLOAD_BIN_DIR: false
+  FIRMWARE_RELEASE: true
+  FIRMWARE_TAG: X86_64
+  TZ: Asia/Shanghai
+
+jobs:
+
+  build_openwrt:
+
+    name: Build OpenWrt firmware
+    runs-on: ubuntu-latest
+    if: github.event.repository.owner.id == github.event.sender.id
+
+    steps:
+      - name: Check Server Performance
+        run: |
+          echo "警告⚠"
+          echo "分配的服务器性能有限，若选择的插件过多，务必注意CPU性能！"
+          echo -e "已知CPU型号(降序): 7763，8370C，8272CL，8171M，E5-2673\n"
+          echo "--------------------------CPU信息--------------------------"
+          echo "CPU物理数量: $(cat /proc/cpuinfo | grep "physical id" | sort | uniq | wc -l)"
+          echo "CPU核心数量: $(nproc)"
+          echo -e "CPU型号信息:$(cat /proc/cpuinfo | grep -m1 name | awk -F: '{print $2}')\n"
+          echo "--------------------------内存信息--------------------------"
+          echo "已安装内存详细信息:"
+          echo -e "$(sudo lshw -short -C memory | grep GiB)\n"
+          echo "--------------------------硬盘信息--------------------------"
+          echo "硬盘数量: $(ls /dev/sd* | grep -v [1-9] | wc -l)" && df -hT
+
+      - name: Checkout
+        uses: actions/checkout@main
+
+      - name: Space cleanup
+        env:
+          DEBIAN_FRONTEND: noninteractive
+        run: |
+          docker rmi `docker images -q`
+          sudo rm -rf /usr/share/dotnet /etc/mysql /etc/php /etc/apt/sources.list.d /usr/local/lib/android
+          sudo -E apt-get -y purge azure-cli ghc* zulu* hhvm llvm* firefox google* dotnet* powershell openjdk* adoptopenjdk* mysql* php* mongodb* dotnet* moby* snapd* || true
+          sudo -E apt-get update
+          sudo -E apt-get -qq install build-essential clang flex bison g++ gawk gcc-multilib g++-multilib gettext git libncurses-dev libssl-dev python3-distutils rsync unzip zlib1g-dev file wget
+          sudo -E apt-get -y autoremove --purge
+          sudo -E apt-get clean
+          df -h
+          
+      - name: Clone Source Code
+        run: |
+          df -hT $GITHUB_WORKSPACE
+          echo "VERSION=$(curl -sL https://api.github.com/repos/openwrt/openwrt/releases | grep -E 'tag_name\": \"v[0-9]+\.[0-9]+\.[0-9]+' -o | head -n 1 | tr -d 'tag_name\": \:v')" >> $GITHUB_ENV
+          REPO_BRANCH=$(curl -sL https://api.github.com/repos/openwrt/openwrt/releases | grep -E 'tag_name\": \"v[0-9]+\.[0-9]+\.[0-9]+' -o | head -n 1 | tr -d 'tag_name\": \:')
+          echo "REPO_BRANCH=$REPO_BRANCH" >> $GITHUB_ENV
+          git clone $REPO_URL --single-branch --depth=1 -b $REPO_BRANCH openwrt
+          cd openwrt
+          echo "OPENWRT_PATH=$PWD" >> $GITHUB_ENV
+          COMMIT_AUTHOR=$(git show -s --date=short --format="作者: %an")
+          echo "COMMIT_AUTHOR=$COMMIT_AUTHOR" >> $GITHUB_ENV
+          COMMIT_DATE=$(git show -s --date=short --format="时间: %ci")
+          echo "COMMIT_DATE=$COMMIT_DATE" >> $GITHUB_ENV
+          COMMIT_MESSAGE=$(git show -s --date=short --format="内容: %s")
+          echo "COMMIT_MESSAGE=$COMMIT_MESSAGE" >> $GITHUB_ENV
+          COMMIT_HASH=$(git show -s --date=short --format="hash: %H")
+          echo "COMMIT_HASH=$COMMIT_HASH" >> $GITHUB_ENV
+
+      - name: Generate configuration file
+        run: |
+          cp $CONFIG_FILE $OPENWRT_PATH/.config
+          cd $OPENWRT_PATH
+          make defconfig > /dev/null 2>&1
+          SOURCE_REPO="$(echo $REPO_URL | awk -F '/' '{print $(NF)}')"
+          echo "SOURCE_REPO=$SOURCE_REPO" >> $GITHUB_ENV
+          DEVICE_TARGET=$(cat .config | grep CONFIG_TARGET_BOARD | awk -F '"' '{print $2}')
+          echo "DEVICE_TARGET=$DEVICE_TARGET" >> $GITHUB_ENV
+          DEVICE_SUBTARGET=$(cat .config | grep CONFIG_TARGET_SUBTARGET | awk -F '"' '{print $2}')
+          echo "DEVICE_SUBTARGET=$DEVICE_SUBTARGET" >> $GITHUB_ENV
+
+          cat >> .config << EOF
+          CONFIG_TARGET_KERNEL_PARTSIZE=256
+          CONFIG_TARGET_ROOTFS_PARTSIZE=512
+          EOF
+          #
+          # 在 cat >> .config <<EOF 到 EOF 之间粘贴你的编译配置, 需注意缩进关系
+          # 例如:
+          # cat >> .config <<EOF
+          # CONFIG_TARGET_IMAGES_GZIP=y
+          # CONFIG_KERNEL_BUILD_USER="OpenWrt-CI"
+          # CONFIG_KERNEL_BUILD_DOMAIN="Azure"
+          # EOF
+          #
+          # ===============================================================
+          # 
+      - name: Update feeds
+        run: |
+          cd $OPENWRT_PATH
+          ./scripts/feeds update -a
+          ./scripts/feeds install -a
+
+      - name: Fix Kernel Vermagic
+        run: |
+          cd $OPENWRT_PATH
+          VERSION=echo $REPO_BRANCH|tr -d 'v'
+          curl -s https://downloads.openwrt.org/releases/$VERSION/targets/x86/64/openwrt-$VERSION-x86-64.manifest | grep kernel | awk '{print $3}' | awk -F- '{print $3}' > vermagic
+          cat vermagic
+          sed -i '121c \\tcp $(TOPDIR)/vermagic $(LINUX_DIR)/.vermagic' include/kernel-defaults.mk
+          #cat include/kernel-defaults.mk | head -n 123 | tail -n +120
+          
+      - name: Load Custom Configuration
+        run: |
+          cd $GITHUB_WORKSPACE
+          chmod +x $GITHUB_WORKSPACE/scripts/$DIY_SCRIPT
+          cat $GITHUB_WORKSPACE/scripts/$DIY_SCRIPT
+          cd $OPENWRT_PATH
+          $GITHUB_WORKSPACE/scripts/$DIY_SCRIPT
+
+      - name: Make download
+        run: |
+          cd $OPENWRT_PATH
+          make download -j8 || make download -j1 V=s
+          rm -rf $(find ./dl/ -size -1024c)
+          df -h
+
+      - name: Compile firmware
+        id: compile
+        run: |
+          cd $OPENWRT_PATH
+          make -j$(nproc) || make -j1 V=s
+          cd $OPENWRT_PATH/bin/targets/*/*
+          echo "KERNEL=$(cat *.manifest | grep ^kernel | cut -d- -f2 | tr -d ' ')" >> $GITHUB_ENV
+          echo "======================="
+          echo "Space usage:"
+          echo "======================="
+          df -h
+          echo "======================="
+          du -h ./ --max-depth=1
+          du -h /mnt/openwrt/ --max-depth=1 || true
+          echo "DATE=$(date +"%Y.%m.%d_%H:%M")" >> $GITHUB_ENV
+
+      - name: Prepare artifact
+        run: |
+          cd $OPENWRT_PATH
+          mkdir -p ./artifact/firmware
+          mkdir -p ./artifact/package
+          mkdir -p ./artifact/buildinfo
+          rm -rf $(find ./bin/targets/ -type d -name "packages")
+          cp -rf $(find ./bin/targets/ -type f) ./artifact/firmware/
+          cp -rf $(find ./bin/packages/ -type f -name "*.ipk") ./artifact/package/
+          cp -rf $(find ./bin/targets/ -type f -name "*.buildinfo" -o -name "*.manifest") ./artifact/buildinfo/
+          echo "DATE_YMD=$(date +"%Y.%m.%d")" >> $GITHUB_ENV
+
+      - name: Deliver buildinfo
+        uses: actions/upload-artifact@main
+        with:
+          name: OpenWrt_buildinfo
+          path: ${{ env.OPENWRT_PATH }}/artifact/buildinfo/
+
+      - name: Deliver package
+        uses: actions/upload-artifact@main
+        with:
+          name: OpenWrt_package
+          path: ${{ env.OPENWRT_PATH }}/artifact/package/
+
+      - name: Deliver firmware
+        uses: actions/upload-artifact@main
+        with:
+          name: OpenWrt_firmware
+          path: ${{ env.OPENWRT_PATH }}/bin/targets/
+          
+      - name: Upload release asset
+        uses: svenstaro/upload-release-action@v2
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: ${{ env.OPENWRT_PATH }}/artifact/firmware/*
+          tag: OpenWRT_${{ env.REPO_BRANCH }}_${{ env.DATE_YMD }}
+          file_glob: true
+          body: |
+            **🐱‍🏍🐱‍🏍🐱‍🏍 OpenWrt Official Firmware For ${{ env.FIRMWARE_TAG }} 🐱‍🏍🐱‍🏍🐱‍🏍**
+            ### 🐱‍👓 ${{ env.DATE }} 🐱‍👓
+            - 🐱‍👤🐱‍👤 平台架构: ${{ env.DEVICE_TARGET }}-${{ env.DEVICE_SUBTARGET }}
+            - 🐱‍🐉🐱‍🐉 固件源码: ${{ env.REPO_URL }}
+            - 🐱‍💻🐱‍💻 源码分支: ${{ env.REPO_BRANCH }}
+            - 🦝🦝 内核版本: ${{ env.KERNEL }}
+            - 🦈🦈 默认地址: 192.168.50.3
+            ### 🐱‍🚀 固件版本 🐱‍🚀
+            - 固件编译前最后一次➦[主源码](${{ env.REPO_URL }})更新记录
+            - ${{ env.COMMIT_AUTHOR }}
+            - ${{ env.COMMIT_DATE }}
+            - ${{ env.COMMIT_MESSAGE }}
+            - ${{ env.COMMIT_HASH }}
