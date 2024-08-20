@@ -17,7 +17,7 @@ on:
 env:
   REPO_URL: https://github.com/immortalwrt/immortalwrt.git
   REPO_BRANCH: openwrt-23.05
-  CONFIG_FILE: immortalwrt_config
+  CONFIG_FILE: immortalwrt.config
   DIY_SCRIPT: immortalwrt_script.sh
   CACHE_TOOLCHAIN: true
   UPLOAD_BIN_DIR: false
