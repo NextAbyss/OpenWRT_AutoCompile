@@ -51,18 +51,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@main
 
-      - name: Clone Source Codec
-        run: |
-          df -hT $GITHUB_WORKSPACE
-          VERSION=$(curl -sL https://api.github.com/repos/immortalwrt/immortalwrt/tags | grep -E 'name\": \"v[0-9]+\.[0-9]+\.[0-9]+' -o | head -n 1 | tr -d 'name\": \"v')
-          echo "VERSION=$VERSION" >> $GITHUB_ENV
-          echo $VERSION
-          REPO_BRANCH=$(curl -sL https://api.github.com/repos/immortalwrt/immortalwrt/branches | grep -E 'name\": \"openwrt-[0-9]+\.[0-9]+' -o | tail -n 1 | sed 's/name\": \"//')
-          echo "REPO_BRANCH=$REPO_BRANCH" >> $GITHUB_ENV
-          echo $REPO_BRANCH
-          echo "git clone $REPO_URL --single-branch --depth=1 -b $REPO_BRANCH immortalwrt"
-          git clone $REPO_URL --single-branch --depth=1 -b $REPO_BRANCH immortalwrt
-
       - name: Space cleanup
         env:
           DEBIAN_FRONTEND: noninteractive
@@ -82,12 +70,14 @@ jobs:
           sudo -E apt-get -y autoremove --purge
           sudo -E apt-get clean
           df -h
-          
+
       - name: Clone Source Code
         run: |
           df -hT $GITHUB_WORKSPACE
-          echo "VERSION=$(curl -sL https://api.github.com/repos/immortalwrt/immortalwrt/tags | grep -E 'name\": \"v[0-9]+\.[0-9]+\.[0-9]+' -o | head -n 1 | tr -d 'name\": \"v')" >> $GITHUB_ENV
-          echo "REPO_BRANCH=$(curl -sL https://api.github.com/repos/immortalwrt/immortalwrt/branches | grep -E 'name\": \"openwrt-[0-9]+\.[0-9]+' -o | tail -n 1 | sed 's/name\": \"//')" >> $GITHUB_ENV
+          VERSION=$(curl -sL https://api.github.com/repos/immortalwrt/immortalwrt/tags | grep -E 'name\": \"v[0-9]+\.[0-9]+\.[0-9]+' -o | head -n 1 | tr -d 'name\": \"v')
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
+          REPO_BRANCH=$(curl -sL https://api.github.com/repos/immortalwrt/immortalwrt/branches | grep -E 'name\": \"openwrt-[0-9]+\.[0-9]+' -o | tail -n 1 | sed 's/name\": \"//')
+          echo "REPO_BRANCH=$REPO_BRANCH" >> $GITHUB_ENV
           echo "git clone $REPO_URL --single-branch --depth=1 -b $REPO_BRANCH immortalwrt"
           git clone $REPO_URL --single-branch --depth=1 -b $REPO_BRANCH immortalwrt
           cd immortalwrt
@@ -100,7 +90,7 @@ jobs:
           echo "COMMIT_MESSAGE=$COMMIT_MESSAGE" >> $GITHUB_ENV
           COMMIT_HASH=$(git show -s --date=short --format="hash: %H")
           echo "COMMIT_HASH=$COMMIT_HASH" >> $GITHUB_ENV
-          
+
       - name: Update feeds
         run: |
           cd $OPENWRT_PATH
@@ -114,7 +104,7 @@ jobs:
           cat vermagic
           sed -i '121c \\tcp $(TOPDIR)/vermagic $(LINUX_DIR)/.vermagic' include/kernel-defaults.mk
           #cat include/kernel-defaults.mk | head -n 123 | tail -n +120
-          
+
       - name: Load Custom Configuration
         run: |
           cd $GITHUB_WORKSPACE
