@@ -28,7 +28,7 @@ jobs:
 
   build_openwrt:
 
-    name: Build OpenWrt firmware
+    name: Build ImmortalWrt firmware
     runs-on: ubuntu-latest
     if: github.event.repository.owner.id == github.event.sender.id
 
@@ -67,11 +67,11 @@ jobs:
       - name: Clone Source Code
         run: |
           df -hT $GITHUB_WORKSPACE
-          echo "VERSION=$(curl -sL https://api.github.com/repos/openwrt/openwrt/releases | grep -E 'tag_name\": \"v[0-9]+\.[0-9]+\.[0-9]+' -o | head -n 1 | tr -d 'tag_name\": \:v')" >> $GITHUB_ENV
-          REPO_BRANCH=$(curl -sL https://api.github.com/repos/openwrt/openwrt/releases | grep -E 'tag_name\": \"v[0-9]+\.[0-9]+\.[0-9]+' -o | head -n 1 | tr -d 'tag_name\": \:')
+          echo "VERSION=$(curl -sL https://api.github.com/repos/immortalwrt/immortalwrt/releases | grep -E 'tag_name\": \"v[0-9]+\.[0-9]+\.[0-9]+' -o | head -n 1 | tr -d 'tag_name\": \:v')" >> $GITHUB_ENV
+          REPO_BRANCH=$(curl -sL https://api.github.com/repos/immortalwrt/immortalwrt/releases | grep -E 'tag_name\": \"v[0-9]+\.[0-9]+\.[0-9]+' -o | head -n 1 | tr -d 'tag_name\": \:')
           echo "REPO_BRANCH=$REPO_BRANCH" >> $GITHUB_ENV
-          git clone $REPO_URL --single-branch --depth=1 -b $REPO_BRANCH openwrt
-          cd openwrt
+          git clone $REPO_URL --single-branch --depth=1 -b $REPO_BRANCH immortalwrt
+          cd immortalwrt
           echo "OPENWRT_PATH=$PWD" >> $GITHUB_ENV
           COMMIT_AUTHOR=$(git show -s --date=short --format="作者: %an")
           echo "COMMIT_AUTHOR=$COMMIT_AUTHOR" >> $GITHUB_ENV
