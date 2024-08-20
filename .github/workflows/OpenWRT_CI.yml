@@ -17,7 +17,7 @@ on:
 env:
   REPO_URL: https://github.com/openwrt/openwrt.git
   CONFIG_FILE: .config
-  DIY_SCRIPT: diy-script.sh
+  DIY_SCRIPT: openwrt_script.sh
   CACHE_TOOLCHAIN: true
   UPLOAD_BIN_DIR: false
   FIRMWARE_RELEASE: true
@@ -126,10 +126,11 @@ jobs:
           
       - name: Load Custom Configuration
         run: |
-          chmod +x $DIY_SCRIPT
-          cat $DIY_SCRIPT
+          cd 
+          chmod +x $GITHUB_WORKSPACE/script/$DIY_SCRIPT
+          cat $GITHUB_WORKSPACE/script/$DIY_SCRIPT
           cd $OPENWRT_PATH
-          $GITHUB_WORKSPACE/$DIY_SCRIPT
+          $GITHUB_WORKSPACE/script/$DIY_SCRIPT
 
       - name: Make download
         run: |
