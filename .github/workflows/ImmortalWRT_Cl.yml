@@ -75,6 +75,7 @@ jobs:
       - name: Clone Source Code
         run: |
           df -hT $GITHUB_WORKSPACE
+          echo "VERSION=$(curl -sL https://api.github.com/repos/immortalwrt/immortalwrt/tags | grep -E 'name\": \"v[0-9]+\.[0-9]+\.[0-9]+' -o | head -n 1 | tr -d 'name\": \"v')" >> $GITHUB_ENV
           git clone $REPO_URL --single-branch --depth=1 -b $REPO_BRANCH immortalwrt
           cd immortalwrt
           echo "OPENWRT_PATH=$PWD" >> $GITHUB_ENV
@@ -196,7 +197,7 @@ jobs:
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           file: ${{ env.OPENWRT_PATH }}/artifact/firmware/*
-          tag: OpenWRT_${{ env.REPO_BRANCH }}_${{ env.DATE_YMD }}
+          tag: OpenWRT-${{ env.VERSION }}_${{ env.DATE_YMD }}
           file_glob: true
           body: |
             **🐱‍🏍🐱‍🏍🐱‍🏍 OpenWrt Official Firmware For ${{ env.FIRMWARE_TAG }} 🐱‍🏍🐱‍🏍🐱‍🏍**
