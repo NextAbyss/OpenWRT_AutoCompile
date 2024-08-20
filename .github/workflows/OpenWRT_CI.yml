@@ -126,7 +126,7 @@ jobs:
           
       - name: Load Custom Configuration
         run: |
-          cd 
+          cd $GITHUB_WORKSPACE
           chmod +x $GITHUB_WORKSPACE/script/$DIY_SCRIPT
           cat $GITHUB_WORKSPACE/script/$DIY_SCRIPT
           cd $OPENWRT_PATH
