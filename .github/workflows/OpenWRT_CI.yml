@@ -127,10 +127,10 @@ jobs:
       - name: Load Custom Configuration
         run: |
           cd $GITHUB_WORKSPACE
-          chmod +x $GITHUB_WORKSPACE/script/$DIY_SCRIPT
-          cat $GITHUB_WORKSPACE/script/$DIY_SCRIPT
+          chmod +x $GITHUB_WORKSPACE/scripts/$DIY_SCRIPT
+          cat $GITHUB_WORKSPACE/scripts/$DIY_SCRIPT
           cd $OPENWRT_PATH
-          $GITHUB_WORKSPACE/script/$DIY_SCRIPT
+          $GITHUB_WORKSPACE/scripts/$DIY_SCRIPT
 
       - name: Make download
         run: |
