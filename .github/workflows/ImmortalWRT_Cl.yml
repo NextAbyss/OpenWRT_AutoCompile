@@ -125,10 +125,10 @@ jobs:
           DEVICE_SUBTARGET=$(cat .config | grep CONFIG_TARGET_SUBTARGET | awk -F '"' '{print $2}')
           echo "DEVICE_SUBTARGET=$DEVICE_SUBTARGET" >> $GITHUB_ENV
 
-          cat >> .config << EOF
-          CONFIG_TARGET_KERNEL_PARTSIZE=256
-          CONFIG_TARGET_ROOTFS_PARTSIZE=512
-          EOF
+          #cat >> .config << EOF
+          #CONFIG_TARGET_KERNEL_PARTSIZE=256
+          #CONFIG_TARGET_ROOTFS_PARTSIZE=512
+          #EOF
           #
           # 在 cat >> .config <<EOF 到 EOF 之间粘贴你的编译配置, 需注意缩进关系
           # 例如:
@@ -199,7 +199,8 @@ jobs:
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           file: ${{ env.OPENWRT_PATH }}/artifact/firmware/*
-          tag: OpenWRT-${{ env.VERSION }}_${{ env.DATE_YMD }}
+          #tag: OpenWRT-${{ env.VERSION }}_${{ env.DATE_YMD }}
+          tag: ${{ env.VERSION }}_${{ env.DATE_YMD }}
           file_glob: true
           body: |
             **🐱‍🏍🐱‍🏍🐱‍🏍 OpenWrt Official Firmware For ${{ env.FIRMWARE_TAG }} 🐱‍🏍🐱‍🏍🐱‍🏍**
@@ -208,7 +209,7 @@ jobs:
             - 🦖🦖 固件源码: ${{ env.REPO_URL }} 🦖🦖
             - 😻💻 源码分支: ${{ env.REPO_BRANCH }} 💻😻
             - 🦝 内核版本: ${{ env.KERNEL }} 🦝
-            - 🦈 默认地址: 192.168.50.3 🦈
+            - 🦈 默认地址: 192.168.50.10 🦈
             ### 🐱‍🚀 固件版本 🐱‍🚀
             - 固件编译前最后一次➦[主源码](${{ env.REPO_URL }})更新记录
             - ${{ env.COMMIT_AUTHOR }}
