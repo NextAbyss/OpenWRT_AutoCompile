@@ -22,8 +22,8 @@ sed -i 's/192.168.1.1/192.168.50.10/g' package/base-files/files/bin/config_gener
 sed -i 's/ImmortalWrt/OpenWrt/g' package/base-files/files/bin/config_generate
 
 #Openclash Core
-#chmod +x $GITHUB_WORKSPACE/scripts/*
-#$GITHUB_WORKSPACE/scripts/clash-core.sh
+chmod +x $GITHUB_WORKSPACE/scripts/openclash_core.sh
+$GITHUB_WORKSPACE/scripts/openclash_core.sh
 
 ./scripts/feeds update -a
 ./scripts/feeds install -a
