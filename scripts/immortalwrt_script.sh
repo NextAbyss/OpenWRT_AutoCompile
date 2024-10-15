@@ -27,3 +27,5 @@ $GITHUB_WORKSPACE/scripts/openclash_core.sh
 
 ./scripts/feeds update -a
 ./scripts/feeds install -a
+
+echo "immortalwrt_script.sh executed successfully."
