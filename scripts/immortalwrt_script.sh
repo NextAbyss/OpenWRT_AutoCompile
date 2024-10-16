@@ -18,10 +18,13 @@ git_sparse_clone v5  https://github.com/sbwml/luci-app-mosdns v2dat
 # Modify default IP
 sed -i 's/192.168.1.1/192.168.50.10/g' package/base-files/files/bin/config_generate
 
-#Modify default logo
+# Modify default logo
 sed -i 's/ImmortalWrt/OpenWrt/g' package/base-files/files/bin/config_generate
 
-#Openclash Core
+# Replace banner
+cp $GITHUB_WORKSPACE/scripts/banner package/base-files/files/etc
+
+# Openclash Core
 chmod +x $GITHUB_WORKSPACE/scripts/openclash_core.sh
 $GITHUB_WORKSPACE/scripts/openclash_core.sh
 
