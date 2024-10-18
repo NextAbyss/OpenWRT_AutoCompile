@@ -16,11 +16,6 @@ git_sparse_clone master https://github.com/vernesong/OpenClash luci-app-openclas
 git_sparse_clone main https://github.com/sirpdboy/luci-app-ddns-go ddns-go
 git_sparse_clone main https://github.com/sirpdboy/luci-app-ddns-go luci-app-ddns-go
 
-# mosdns
-git_sparse_clone v5  https://github.com/sbwml/luci-app-mosdns luci-app-mosdns
-git_sparse_clone v5  https://github.com/sbwml/luci-app-mosdns mosdns
-git_sparse_clone v5  https://github.com/sbwml/luci-app-mosdns v2dat
-
 # udp2raw
 git_sparse_clone master https://github.com/immortalwrt/packages net/udp2raw
 git_sparse_clone master https://github.com/immortalwrt/luci applications/luci-app-udp2raw
