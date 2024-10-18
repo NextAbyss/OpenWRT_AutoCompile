@@ -19,7 +19,7 @@ git_sparse_clone main https://github.com/sirpdboy/luci-app-ddns-go luci-app-ddns
 # udp2raw
 git_sparse_clone master https://github.com/immortalwrt/packages net/udp2raw
 git_sparse_clone master https://github.com/immortalwrt/luci applications/luci-app-udp2raw
-#sed -i 's?../../luci.mk?$(TOPDIR)/feeds/luci/luci.mk?g' package/luci-app-udp2raw/Makefile
+sed -i 's?../../luci.mk?$(TOPDIR)/feeds/luci/luci.mk?g' package/luci-app-udp2raw/Makefile
 
 # Modify default IP
 sed -i 's/192.168.1.1/192.168.50.10/g' package/base-files/files/bin/config_generate
