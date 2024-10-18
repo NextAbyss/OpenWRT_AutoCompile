@@ -33,7 +33,7 @@ sed -i 's/192.168.1.1/192.168.50.10/g' package/base-files/files/bin/config_gener
 sed -i "315s/UTC'/CST-8'\\n\\t\\tset system.@system\[-1\].zonename=\'Asia\/Shanghai\'/" package/base-files/files/bin/config_generate
 
 chmod +x $GITHUB_WORKSPACE/scripts/*
-$GITHUB_WORKSPACE/scripts/clash_core.sh
+$GITHUB_WORKSPACE/scripts/openclash_core.sh
 
 ./scripts/feeds update -a
 ./scripts/feeds install -a
