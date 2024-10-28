@@ -12,7 +12,8 @@ function git_sparse_clone() {
   cd .. && rm -rf $repodir
 }
 
-git_sparse_clone master https://github.com/vernesong/OpenClash luci-app-openclash
+#git_sparse_clone master https://github.com/vernesong/OpenClash luci-app-openclash
+git_sparse_clone dev https://github.com/vernesong/OpenClash luci-app-openclash
 git_sparse_clone main https://github.com/sirpdboy/luci-app-ddns-go ddns-go
 git_sparse_clone main https://github.com/sirpdboy/luci-app-ddns-go luci-app-ddns-go
 
