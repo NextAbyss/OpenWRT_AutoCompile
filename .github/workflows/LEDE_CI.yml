@@ -88,6 +88,13 @@ jobs:
           COMMIT_HASH=$(git show -s --date=short --format="hash: %H")
           echo "COMMIT_HASH=$COMMIT_HASH" >> $GITHUB_ENV
 
+      - name: 真男人Cache！
+        uses: klever1988/cachewrtbuild@main
+        with:
+          ccache: 'true'
+          mixkey: ${{ env.FIRMWARE_TAG }}
+          prefix: ${{ github.workspace }}/lede
+
       - name: Update feeds
         run: |
           cd $OPENWRT_PATH
