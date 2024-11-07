@@ -77,6 +77,7 @@ jobs:
           echo "REPO_BRANCH=$REPO_BRANCH" >> $GITHUB_ENV
           echo "git clone $REPO_URL --single-branch --depth=1 -b $REPO_BRANCH lede"
           git clone $REPO_URL --single-branch --depth=1 -b $REPO_BRANCH lede
+          ln -sf /mnt/workdir/lede $GITHUB_WORKSPACE/lede
           cd lede
           echo "OPENWRT_PATH=$PWD" >> $GITHUB_ENV
           COMMIT_AUTHOR=$(git show -s --date=short --format="作者: %an")
