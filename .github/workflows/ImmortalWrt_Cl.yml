@@ -106,7 +106,7 @@ jobs:
           cd $OPENWRT_PATH
           curl -s https://downloads.immortalwrt.org/releases/$MAGICVERSION/targets/x86/64/immortalwrt-$MAGICVERSION-x86-64.manifest | grep kernel | awk '{print $3}' | awk -F- '{print $3}' > vermagic
           cat vermagic
-          sed 's|\$(LINUX_DIR)/.vermagic|\$(TOPDIR)/vermagic|g' include/kernel-defaults.mk
+          sed -i 's|\$(LINUX_DIR)/.vermagic|\$(TOPDIR)/vermagic|g' include/kernel-defaults.mk
           #sed -i '121c \\tcp $(TOPDIR)/vermagic $(LINUX_DIR)/.vermagic' include/kernel-defaults.mk
           #cat include/kernel-defaults.mk | head -n 123 | tail -n +120
 
