@@ -16,6 +16,7 @@ on:
 #
 env:
   REPO_URL: https://github.com/immortalwrt/immortalwrt.git
+  REPO_BRANCH: openwrt-23.05  #不支持RC版本号
   CONFIG_FILE: immortalwrt.config
   DIY_SCRIPT: immortalwrt_script.sh
   CACHE_TOOLCHAIN: true
@@ -74,14 +75,14 @@ jobs:
       - name: Clone Source Code
         run: |
           df -hT $GITHUB_WORKSPACE
-          VERSION=$(curl -sL https://api.github.com/repos/openwrt/openwrt/tags | grep -Eo '"name": "\S+([0-9]+\.[0-9]+\.[0-9]+(-[a-zA-Z0-9]+)?)+"' | sed 's/"name": "\(.*\)"/\1/' | head -n 1 | tr -d 'name\": \"v')
-          echo "VERSION=$VERSION" >> $GITHUB_ENV
-          MAGICVERSION=$(curl -sL https://api.github.com/repos/immortalwrt/immortalwrt/tags | grep -Eo '"name": "\S+([0-9]+\.[0-9]+\.[0-9]+(-[a-zA-Z0-9]+)?)+"' | sed 's/"name": "\(.*\)"/\1/' | head -n 1 | tr -d 'name\": \"v')
-          echo "MAGICVERSION=$MAGICVERSION" >> $GITHUB_ENV
-          REPO_BRANCH=$(curl -sL https://api.github.com/repos/immortalwrt/immortalwrt/branches | grep -E 'name\": \"openwrt-[0-9]+\.[0-9]+' -o | tail -n 1 | sed 's/name\": \"//')
-          echo "REPO_BRANCH=$REPO_BRANCH" >> $GITHUB_ENV
-          echo "git clone $REPO_URL --single-branch --depth=1 -b $REPO_BRANCH immortalwrt"
-          git clone $REPO_URL --single-branch --depth=1 -b $REPO_BRANCH immortalwrt
+          #VERSION=$(curl -sL https://api.github.com/repos/openwrt/openwrt/tags | grep -Eo '"name": "\S+([0-9]+\.[0-9]+\.[0-9]+(-[a-zA-Z0-9]+)?)+"' | sed 's/"name": "\(.*\)"/\1/' | head -n 1 | tr -d 'name\": \"v')
+          #echo "VERSION=$VERSION" >> $GITHUB_ENV
+          #MAGICVERSION=$(curl -sL https://api.github.com/repos/immortalwrt/immortalwrt/tags | grep -Eo '"name": "\S+([0-9]+\.[0-9]+\.[0-9]+(-[a-zA-Z0-9]+)?)+"' | sed 's/"name": "\(.*\)"/\1/' | head -n 1 | tr -d 'name\": \"v')
+          #echo "MAGICVERSION=$MAGICVERSION" >> $GITHUB_ENV
+          #REPO_BRANCH=$(curl -sL https://api.github.com/repos/immortalwrt/immortalwrt/branches | grep -E 'name\": \"openwrt-[0-9]+\.[0-9]+' -o | tail -n 1 | sed 's/name\": \"//')
+          #echo "REPO_BRANCH=$REPO_BRANCH" >> $GITHUB_ENV
+          echo "git clone $REPO_URL --single-branch --depth=1 -b ${{ env.REPO_BRANCH }} immortalwrt"
+          git clone $REPO_URL --single-branch --depth=1 -b ${{ env.REPO_BRANCH }} immortalwrt
           cd immortalwrt
           echo "OPENWRT_PATH=$PWD" >> $GITHUB_ENV
           COMMIT_AUTHOR=$(git show -s --date=short --format="作者: %an")
@@ -101,12 +102,12 @@ jobs:
           ./scripts/feeds update -a
           ./scripts/feeds install -a
 
-      - name: Fix Kernel Vermagic
-        run: |
-          cd $OPENWRT_PATH
-          curl -s https://downloads.immortalwrt.org/releases/$MAGICVERSION/targets/x86/64/immortalwrt-$MAGICVERSION-x86-64.manifest | grep kernel | awk '{print $3}' | awk -F- '{print $3}' > vermagic
-          cat vermagic
-          sed -i 's|\$(LINUX_DIR)/.vermagic|\$(TOPDIR)/vermagic|g' include/kernel-defaults.mk
+      #- name: Fix Kernel Vermagic
+      #  run: |
+      #    cd $OPENWRT_PATH
+      #    curl -s https://downloads.immortalwrt.org/releases/$MAGICVERSION/targets/x86/64/immortalwrt-$MAGICVERSION-x86-64.manifest | grep kernel | awk '{print $3}' | awk -F- '{print $3}' > vermagic
+      #    cat vermagic
+      #    sed -i 's|\$(LINUX_DIR)/.vermagic|\$(TOPDIR)/vermagic|g' include/kernel-defaults.mk
           #sed -i '121c \\tcp $(TOPDIR)/vermagic $(LINUX_DIR)/.vermagic' include/kernel-defaults.mk
           #cat include/kernel-defaults.mk | head -n 123 | tail -n +120
 
@@ -204,7 +205,7 @@ jobs:
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           file: ${{ env.OPENWRT_PATH }}/artifact/firmware/*
-          tag: OpenWRT-${{ env.VERSION }}_${{ env.COMMIT_NO }}
+          tag: ${{ env.REPO_BRANCH }}_${{ env.COMMIT_NO }}
           file_glob: true
           body: |
             **🐱‍🏍🐱‍🏍🐱‍🏍 OpenWrt Official Firmware For ${{ env.FIRMWARE_TAG }} 🐱‍🏍🐱‍🏍🐱‍🏍**
