@@ -15,6 +15,11 @@ git_sparse_clone v5  https://github.com/sbwml/luci-app-mosdns luci-app-mosdns
 git_sparse_clone v5  https://github.com/sbwml/luci-app-mosdns mosdns
 git_sparse_clone v5  https://github.com/sbwml/luci-app-mosdns v2dat
 
+# openclash dev
+git_sparse_clone dev  https://github.com/vernesong/OpenClash luci-app-openclash
+rm -rf feeds/luci/applications/luci-app-openclash
+mv package/luci-app-openclash feeds/luci/applications
+
 # Modify default IP
 sed -i 's/192.168.1.1/192.168.50.10/g' package/base-files/files/bin/config_generate
 
