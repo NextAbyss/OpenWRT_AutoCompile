@@ -30,7 +30,7 @@ jobs:
   build_openwrt:
 
     name: Build ImmortalWrt firmware
-    runs-on: ubuntu-latest
+    runs-on: debian-latest
     if: github.event.repository.owner.id == github.event.sender.id
 
     steps:
