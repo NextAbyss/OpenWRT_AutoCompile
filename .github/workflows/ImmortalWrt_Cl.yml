@@ -56,8 +56,15 @@ jobs:
         env:
           DEBIAN_FRONTEND: noninteractive
         run: |
-          #docker rmi `docker images -q`
-          docker system prune -a
+          IMAGE_IDS=$(docker images -q)
+          # 判断是否有镜像 ID
+          if [ -n "$IMAGE_IDS" ]; then
+            echo "Found images, proceeding to delete..."
+            docker rmi -f $IMAGE_IDS
+            echo "All images have been deleted."
+          else
+            echo "No images found, skipping deletion."
+          fi
           sudo rm -rf /usr/share/dotnet /etc/mysql /etc/php /etc/apt/sources.list.d /usr/local/lib/android
           sudo -E apt-get -y purge azure-cli ghc* zulu* hhvm llvm* firefox google* dotnet* powershell openjdk* adoptopenjdk* mysql* php* mongodb* dotnet* moby* snapd* || true
           sudo -E apt-get update
